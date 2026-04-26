@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import router
-from engine import load_story
+from loader import load_story
 
 app = FastAPI()
 app.include_router(router)
@@ -18,5 +18,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 

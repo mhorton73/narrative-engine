@@ -11,7 +11,7 @@ class Stat(str, Enum):
 
 class StoryItem(BaseModel):
     key: str
-    type: Literal["item", "flag"]
+    type: Literal["item", "flag", "spell"]
 
 class StatChange(BaseModel):
     stat: Stat

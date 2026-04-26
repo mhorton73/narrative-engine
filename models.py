@@ -23,6 +23,7 @@ class Character(BaseModel):
 
     inventory: List[str] = Field(default_factory=list)
     flags: List[str] = Field(default_factory=list)
+    spells: List[str] = Field(default_factory=list)
 
     current_node: str
 
