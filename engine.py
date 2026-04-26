@@ -2,16 +2,23 @@
 from schemas import Choice, Condition, Effect, StoryItem, SkillCheck
 from models import Character
 
+def get_collections(state: Character):
+    return {
+        "item": state.inventory,
+        "flag": state.flags,
+        "spell": state.spells,
+    }
+
 # --------- CONDITION CHECK ---------
 def check_condition(condition: Condition, state: Character):
+    
+    collections = get_collections(state)
+
     def check_item(item: StoryItem):
-        if item.type == "item":
-            return item.key in state.inventory
-        elif item.type == "flag":
-            return item.key in state.flags
-        elif item.type == "spell":
-            return item.key in state.spells
-        return False
+        collection = collections.get(item.type)
+        if collection is None:
+            raise ValueError(f"Unknown StoryItem type: {item.type}")
+        return item.key in collection
 
     # required
     for item in condition.required:
@@ -28,23 +35,22 @@ def check_condition(condition: Condition, state: Character):
 
 # --------- APPLY EFFECT ---------
 def apply_effect(effect: Effect, state: Character):
+    
+    collections = get_collections(state)
     for item in effect.add:
-        if item.type == "item":
-            state.inventory.append(item.key)
-        elif item.type == "flag":
-            state.flags.append(item.key)
-        elif item.type == "spell":
-            state.spells.append(item.key)
+        collection = collections.get(item.type)
+        if collection is None:
+            raise ValueError(f"Unknown StoryItem type: {item.type}")
+        collection.append(item.key)
 
 
     for item in effect.remove:
-        if item.type == "item" and item.key in state.inventory:
-            state.inventory.remove(item.key)
-        elif item.type == "flag" and item.key in state.flags:
-            state.flags.remove(item.key)
-        elif item.type == "spell" and item.key in state.spells:
-            state.spells.remove(item.key)
-
+        collection = collections.get(item.type)
+        if collection is None:
+            raise ValueError(f"Unknown StoryItem type: {item.type}")
+        if item.key in collection:
+            collection.remove(item.key)
+            
     state.gold += effect.gold_change
 
     for s in effect.stat_change:

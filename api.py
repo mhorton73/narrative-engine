@@ -52,7 +52,8 @@ def start_game(request: Request):
 
     return {
         "session_id": session_id,
-        "node": node.model_dump()
+        "node": node.model_dump(),
+        "state": state.model_dump()
     }
 
 @router.post("/load/{save_name}")
@@ -72,7 +73,8 @@ def load_game(save_name: str, session_id: str, request: Request):
 
     return {
         "session_id": session_id,
-        "node": node.model_dump()
+        "node": node.model_dump(),
+        "state": state.model_dump()
     }
 
 @router.post("/save/{save_name}")
@@ -103,12 +105,15 @@ def delete_save(save_name: str):
 
 @router.post("/choose")
 def choose(session_id: str, choice_index: int, request: Request):
+
     story = request.app.state.story
     state = request.app.state.sessions[session_id]
     if not state:
         raise ValueError("Invalid session")
 
     node = story[state.current_node]
+    if choice_index < 0 or choice_index >= len(node.choices):
+        raise ValueError("Invalid choice index")
     choice = node.choices[choice_index]
 
     apply_effect(node.effects, state)
@@ -120,6 +125,7 @@ def choose(session_id: str, choice_index: int, request: Request):
 
     return {
         "node": story[next_node].model_dump(),
+        "state": state.model_dump(),
         "is_end": is_end
     }
 
@@ -130,9 +136,11 @@ def autosave(session_id :str, request: Request):
     if not state:
         raise ValueError("Invalid session")
     
-    path = f"saves/autosave.json"
+    path = os.path.join(BASE_DIR, "autosave.json")
     with open(path, "w") as f:
         f.write(state.model_dump_json())
+
+    return{"status": "autosaved"}
 
 
 @router.post("/close-session")

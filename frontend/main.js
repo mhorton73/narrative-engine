@@ -8,7 +8,7 @@ async function init() {
 
   sessionId = data.session_id;
 
-  render(data.node, handleChoice);
+  render(data.node, data.state, handleChoice);
 }
 
 async function handleChoice(index) {

@@ -9,7 +9,7 @@ __pycache__/
 *.db
 
 # Story
-# story/
+story/
 
 # OS junk
 .DS_Store

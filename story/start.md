@@ -3,7 +3,7 @@
 id: start
 
 ## Text
-This is the beginning. Do you accept the terms?
+This is the beginning. Do you accept *the* **terms**?
 
 ## Choices
 - Accept

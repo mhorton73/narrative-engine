@@ -1,5 +1,16 @@
-export function render(node, onChoice) {
-  document.getElementById("story").innerText = node.text;
+export function render(node, state, onChoice) {
+  
+  document.getElementById("stats").innerText = `
+  HP: ${state.hp}
+  Gold: ${state.gold}
+  STR: ${state.stats.strength}
+  DEX: ${state.stats.dexterity}
+  INT: ${state.stats.intelligence}
+  FAI: ${state.stats.faith}
+  `;
+
+  document.getElementById("story").innerHTML =
+    marked.parse(node.text);
 
   const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = "";
